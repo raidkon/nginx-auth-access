@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   AlertModule,
@@ -26,6 +27,7 @@ import { TotpSetupDialogComponent } from './totp-setup-dialog.component';
     CalloutModule,
     CardModule,
     FormModule,
+    FormsModule,
     GridModule,
     HeaderModule,
     IconModule,
