@@ -1,0 +1,94 @@
+<c-modal
+  alignment="center"
+  [visible]="modalVisible()"
+  (visibleChange)="onModalVisibleChange($event)"
+  [backdrop]="'static'"
+  scrollable="true"
+  transition="true"
+>
+  <c-modal-header>
+    <h5 cModalTitle>Настройка TOTP</h5>
+    <button cButtonClose (click)="cancel()" type="button" aria-label="Закрыть"></button>
+  </c-modal-header>
+  <c-modal-body>
+    @switch (step()) {
+      @case ('choose') {
+        <p class="lead text-body-secondary mb-4">Как добавить ключ в приложение-аутентификатор?</p>
+        <div class="d-grid gap-2">
+          <button cButton color="primary" type="button" (click)="chooseQr()">QR-код</button>
+          <button cButton variant="outline" type="button" (click)="chooseManual()">Ввести ключ вручную</button>
+        </div>
+      }
+      @case ('qr') {
+        <p class="text-body-secondary small mb-3">
+          Отсканируйте QR в приложении (Google Authenticator, Aegis и т.п.), затем введите 6-значный код.
+        </p>
+        @if (qrDataUrl(); as src) {
+          <div class="d-flex justify-content-center mb-3">
+            <img class="qr-img img-fluid border rounded" [src]="src" width="260" height="260" alt="QR-код TOTP" />
+          </div>
+        } @else {
+          <p class="text-body-secondary text-center">Генерация QR…</p>
+        }
+        <div class="mb-2">
+          <label cLabel for="totp-code-qr">Код из приложения</label>
+          <input
+            cFormControl
+            id="totp-code-qr"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            [value]="code()"
+            (input)="patchCode($any($event.target).value)"
+            placeholder="000000"
+          />
+        </div>
+        @if (verifyError(); as err) {
+          <c-alert color="danger" [fade]="true">{{ err }}</c-alert>
+        }
+      }
+      @case ('manual') {
+        <p class="text-body-secondary small mb-3">
+          Скопируйте ключ в приложение (30 с, 6 цифр, SHA-1), затем введите код из приложения.
+        </p>
+        <div class="mb-3">
+          <label cLabel for="totp-secret-ro">Секрет (Base32)</label>
+          <input
+            cFormControl
+            id="totp-secret-ro"
+            type="text"
+            [value]="secretBase32()"
+            readonly
+            plaintext
+          />
+        </div>
+        <div class="mb-2">
+          <label cLabel for="totp-code-man">Код из приложения</label>
+          <input
+            cFormControl
+            id="totp-code-man"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            [value]="code()"
+            (input)="patchCode($any($event.target).value)"
+            placeholder="000000"
+          />
+        </div>
+        @if (verifyError(); as err) {
+          <c-alert color="danger" [fade]="true">{{ err }}</c-alert>
+        }
+      }
+    }
+  </c-modal-body>
+  <c-modal-footer>
+    @if (step() === 'choose') {
+      <button cButton variant="ghost" color="secondary" type="button" (click)="cancel()">Отмена</button>
+    } @else {
+      <button cButton variant="ghost" color="secondary" type="button" (click)="backToChoose()">Назад</button>
+      <button cButton color="primary" type="button" (click)="confirm()" [disabled]="!codeValid()">
+        Подтвердить
+      </button>
+    }
+  </c-modal-footer>
+</c-modal>

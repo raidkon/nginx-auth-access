@@ -1,0 +1,26 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage.*
+*.coverprofile
+profile.cov
+
+go.work
+go.work.sum
+.env
+
+# Runtime config (secrets, users)
+store/config.toml
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Editor
+.idea/
+.vscode/

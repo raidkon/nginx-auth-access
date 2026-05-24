@@ -1,0 +1,21 @@
+.login-page {
+  box-sizing: border-box;
+  padding: clamp(1rem, 4vw, 2rem) clamp(0.75rem, 3vw, 1.5rem);
+  --login-brand-size: 3.5rem;
+}
+
+/* Одна колонка: ширина формы, без вложенного container+col (раньше давало «узкую полоску»). */
+.login-panel {
+  width: 100%;
+  max-width: min(100%, 32rem);
+  margin-inline: auto;
+}
+
+.login-card {
+  border-radius: var(--cui-border-radius-xl, 0.75rem);
+}
+
+.login-brand-icon {
+  width: var(--login-brand-size);
+  height: var(--login-brand-size);
+}

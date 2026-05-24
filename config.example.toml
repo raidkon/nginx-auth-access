@@ -1,0 +1,36 @@
+# Пример конфигурации nginx-auth-access.
+#
+# Docker compose: cp config.example.toml config.toml
+# Сборка из исходников / home-smart: cp config.example.toml store/config.toml
+# systemd (install.sh): /etc/nginx-auth-access/config.toml
+#
+# verify_log_path: Docker — /data/logs/verify.log;
+#   systemd — /var/lib/nginx-auth-access/logs/verify.log
+
+# signing_key — секрет HMAC-JWT для cookie ACCESS_ZONE (≥ 16 символов).
+signing_key = "change-me-at-least-16-chars"
+
+# Публичный hostname панели входа (server_name в nginx)
+panel_hostname = "access.example.com"
+
+# Необязательно: родительский домен cookie, напр. ".example.com"
+cookie_domain = ""
+
+# true — cookie только по HTTPS (рекомендуется в проде)
+cookie_secure = true
+
+# Постоянные «безопасные» CIDR/IP для auth_request (через запятую)
+net_safe_access = ""
+
+# Журнал auth_request (JSONL). Отключить: "-" или "off"
+verify_log_path = "/data/logs/verify.log"
+
+[listen]
+public = ":80"
+verify = ":81"
+
+# [[users]]
+# login = "admin"
+# password_bcrypt = "$2a$10$..."
+# totp_secret = "JBSWY3DPEHPK3PXP"
+# admin = true

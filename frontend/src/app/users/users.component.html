@@ -1,0 +1,161 @@
+<div class="admin-shell d-flex flex-column min-vh-100">
+  <c-header class="admin-header border-bottom shadow-sm mb-0">
+    <c-container [fluid]="true" class="px-3 d-flex align-items-center py-2 gap-3">
+      <div class="d-flex align-items-center gap-2 text-body-secondary">
+        <c-icon name="cilPeople" size="lg" />
+        <span class="fw-semibold text-body">Пользователи</span>
+      </div>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <button cButton variant="ghost" color="secondary" type="button" (click)="logout()">
+          <c-icon name="cilAccountLogout" class="me-1" />
+          Выйти
+        </button>
+      </div>
+    </c-container>
+  </c-header>
+
+  <div class="admin-body flex-grow-1 bg-body-secondary">
+    <c-container class="py-4">
+      @if (error()) {
+        <c-alert color="danger" class="mb-3 d-flex align-items-center gap-2" [fade]="true">
+          <c-icon name="cilWarning" />
+          {{ error() }}
+        </c-alert>
+      }
+
+      <c-card class="shadow-sm border-0 mb-4">
+        <c-card-header class="bg-body py-3 border-bottom">
+          <div class="d-flex align-items-center gap-2">
+            <c-icon name="cilUser" class="text-primary" />
+            <div>
+              <h2 class="h5 mb-0">Учётные записи</h2>
+              <small class="text-body-secondary">Управление после входа в зону</small>
+            </div>
+          </div>
+        </c-card-header>
+        <c-card-body class="p-0">
+          @if (bootstrap()) {
+            <c-callout color="warning" class="m-3 mb-0">
+              Режим bootstrap: создайте первого пользователя (он получит права администратора).
+            </c-callout>
+          }
+          <div class="table-responsive">
+            <table cTable [hover]="true" [striped]="true" class="mb-0 align-middle">
+              <thead class="text-body-secondary">
+                <tr>
+                  <th scope="col">Логин</th>
+                  <th scope="col">Admin</th>
+                  <th scope="col">TOTP</th>
+                  <th scope="col" class="text-end">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (u of users(); track u.login) {
+                  <tr>
+                    <td><span class="fw-medium">{{ u.login }}</span></td>
+                    <td>{{ u.admin ? 'да' : 'нет' }}</td>
+                    <td>{{ u.has_totp ? 'включён' : 'нет' }}</td>
+                    <td class="text-end">
+                      <button cButton color="danger" variant="outline" size="sm" type="button" (click)="remove(u.login)">
+                        Удалить
+                      </button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="4" class="text-body-secondary text-center py-4">Пока нет пользователей</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </c-card-body>
+      </c-card>
+
+      <c-card class="shadow-sm border-0">
+        <c-card-header class="bg-body py-3 border-bottom">
+          <h3 class="h5 mb-0">Добавить пользователя</h3>
+        </c-card-header>
+        <c-card-body>
+          <form cForm (ngSubmit)="add()" class="add-form">
+            <c-row class="g-3">
+              <c-col md="6">
+                <label cLabel for="new-login">Логин</label>
+                <input
+                  cFormControl
+                  id="new-login"
+                  type="text"
+                  [value]="newLogin()"
+                  (input)="patchNewLogin($any($event.target).value)"
+                  autocomplete="off"
+                />
+              </c-col>
+              <c-col md="6">
+                <label cLabel for="new-password">Пароль</label>
+                <input
+                  cFormControl
+                  id="new-password"
+                  type="password"
+                  [value]="newPassword()"
+                  (input)="patchNewPassword($any($event.target).value)"
+                  autocomplete="new-password"
+                />
+              </c-col>
+              <c-col md="12">
+                <label cLabel for="new-totp">TOTP (Base32)</label>
+                <div class="d-flex flex-wrap gap-2 align-items-start">
+                  <input
+                    cFormControl
+                    class="flex-grow-1 totp-readonly"
+                    id="new-totp"
+                    type="text"
+                    readonly
+                    plaintext
+                    [value]="newTotpSecret()"
+                    placeholder="Нажмите «Настроить TOTP»"
+                  />
+                  <button cButton color="primary" variant="outline" type="button" (click)="openTotpSetup()">
+                    Настроить TOTP
+                  </button>
+                  @if (newTotpSecret()) {
+                    <button cButton color="secondary" variant="ghost" type="button" (click)="clearTotpSecret()">
+                      Сбросить
+                    </button>
+                  }
+                </div>
+              </c-col>
+              <c-col md="12">
+                <c-form-check>
+                  <input
+                    cFormCheckInput
+                    type="checkbox"
+                    id="chk-admin"
+                    [checked]="newAdmin()"
+                    (change)="patchNewAdmin($any($event.target).checked)"
+                  />
+                  <label cFormCheckLabel for="chk-admin">Администратор</label>
+                </c-form-check>
+              </c-col>
+              <c-col md="12" class="d-flex flex-wrap gap-2 pt-1">
+                <button cButton color="primary" type="submit" [disabled]="!canAddUser()">
+                  @if (saving()) {
+                    <c-spinner size="sm" class="me-2" />
+                  }
+                  Добавить
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-container>
+  </div>
+</div>
+
+@if (totpWizardOpen()) {
+  <app-totp-setup-dialog
+    [login]="newLogin()"
+    (secretApplied)="applyTotpSecret($event)"
+    (cancelled)="closeTotpWizard()"
+  />
+}

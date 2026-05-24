@@ -1,0 +1,92 @@
+<div class="login-page min-vh-100 w-100 d-flex align-items-center justify-content-center bg-body-secondary">
+  <div class="login-panel w-100">
+    <c-card class="shadow-sm border-0 login-card">
+      <c-card-body class="p-4 p-md-5">
+        <div class="text-center mb-4">
+          <span
+            class="login-brand-icon d-inline-flex align-items-center justify-content-center rounded-3 bg-primary text-white mb-3"
+          >
+            <c-icon name="cilLockLocked" size="xl" />
+          </span>
+          <h1 class="h3 mb-1">Доступ к зоне</h1>
+          <p class="text-body-secondary mb-0">Вход в панель home-smart access</p>
+        </div>
+
+        @if (error()) {
+          <c-alert color="danger" class="d-flex align-items-center gap-2" [fade]="true">
+            <c-icon name="cilWarning" class="flex-shrink-0" />
+            {{ error() }}
+          </c-alert>
+        }
+
+        <c-callout color="info" class="small mb-4">
+          Если в <code>config.toml</code> ещё нет пользователей: логин <code>noauth</code>, пароль
+          <code>noauth</code>, TOTP <code>000000</code>.
+        </c-callout>
+
+        <form cForm (ngSubmit)="submit()">
+          <div class="mb-3">
+            <label cLabel for="login">Логин</label>
+            <input
+              cFormControl
+              id="login"
+              type="text"
+              [value]="login()"
+              (input)="patchLogin($any($event.target).value)"
+              autocomplete="username"
+              placeholder="Имя пользователя"
+            />
+          </div>
+          <div class="mb-3">
+            <label cLabel for="password">Пароль</label>
+            <input
+              cFormControl
+              id="password"
+              type="password"
+              [value]="password()"
+              (input)="patchPassword($any($event.target).value)"
+              autocomplete="current-password"
+              placeholder="••••••••"
+            />
+          </div>
+          <div class="mb-3">
+            <label cLabel for="totp">TOTP</label>
+            <input
+              cFormControl
+              id="totp"
+              type="text"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              maxlength="6"
+              [value]="totp()"
+              (input)="patchTotp($any($event.target).value)"
+              placeholder="000000"
+            />
+          </div>
+          <div class="mb-4">
+            <label cLabel for="period">Срок сессии</label>
+            <select
+              cSelect
+              id="period"
+              [value]="period()"
+              (change)="patchPeriod($any($event.target).value)"
+            >
+              @for (p of periods; track p.v) {
+                <option [value]="p.v">{{ p.l }}</option>
+              }
+            </select>
+          </div>
+          <div class="d-grid gap-2">
+            <button cButton color="primary" type="submit" [disabled]="!canSubmit()">
+              @if (busy()) {
+                <c-spinner size="sm" class="me-2" />
+              }
+              Войти
+            </button>
+          </div>
+        </form>
+      </c-card-body>
+    </c-card>
+    <p class="text-center text-body-secondary small mt-3 mb-0">CoreUI · Angular 21 zoneless · signals</p>
+  </div>
+</div>

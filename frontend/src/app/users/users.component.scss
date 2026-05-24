@@ -1,0 +1,15 @@
+.admin-shell {
+  background-color: var(--cui-body-bg);
+}
+
+.admin-header {
+  background-color: var(--cui-header-bg, var(--cui-body-bg));
+}
+
+.admin-body {
+  min-height: 0;
+}
+
+.add-form .totp-readonly {
+  min-width: 12rem;
+}

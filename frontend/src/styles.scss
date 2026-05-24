@@ -1,0 +1,13 @@
+@use '@coreui/coreui/scss/coreui' as *;
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--cui-font-sans-serif);
+  background-color: var(--cui-body-bg);
+  color: var(--cui-body-color);
+}

@@ -1,0 +1,6 @@
+# Полный output `ng build` сюда не коммитим (в образ SPA копируется на этапе Docker).
+# Остаётся только placeholder index.html; для локального go run с UI:
+#   rsync -a --delete dist/frontend/browser/ ../backend/internal/uiembed/browser/
+# из каталога access/frontend после сборки.
+browser/*
+!browser/index.html
