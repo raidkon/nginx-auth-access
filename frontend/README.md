@@ -22,7 +22,6 @@ npm run build
 ## Tests
 
 ```bash
-npm test
+npm test          # Vitest (watch)
+npm run test:ci   # однократный прогон с coverage
 ```
-
-Karma использует `zone.js` только для тестового окружения.

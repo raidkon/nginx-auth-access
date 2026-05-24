@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --coverage"
   },
   "private": true,
   "dependencies": {
@@ -31,17 +32,13 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^21.2.0",
+    "@angular/build": "^21.2.12",
     "@angular/cli": "^21.2.0",
     "@angular/compiler-cli": "^21.2.0",
-    "@types/jasmine": "~5.1.0",
     "@types/qrcode": "^1.5.6",
-    "jasmine-core": "~5.6.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
+    "@vitest/coverage-v8": "^4.1.7",
+    "jsdom": "^28.1.0",
     "typescript": "~5.9.0",
-    "zone.js": "^0.16.0"
+    "vitest": "^4.1.7"
   }
 }
